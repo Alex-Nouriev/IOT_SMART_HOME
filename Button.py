@@ -28,11 +28,11 @@ import ssl
 # Creating Client name - should be unique 
 global clientname, CONNECTED, we_current
 CONNECTED = False
-r=random.randrange(1,10000000)
+r=random.randrange(1,10)
 clientname="IOT_client-Id234-"+str(r)
 DHT_topic = 'IoT/final_project/alex_lir_kesem'
 update_rate = 5000 # in msec
-we_current = 5000
+#we_current = 5000
 
 class Mqtt_client():
     
@@ -203,7 +203,7 @@ class ConnectionDock(QDockWidget):
         formLayot.addRow("Turn On",self.eConnectbtn)
         formLayot.addRow("Turn Off", self.Cutoff)
         formLayot.addRow("Pub topic",self.ePublisherTopic)
-        formLayot.addRow("Weight",self.Weight)
+        formLayot.addRow("massege",self.Weight)
         # formLayot.addRow("Humidity",self.Humidity)
         # self.turn_off_button2 = QPushButton("Turn Off 2")
         # formLayot.addRow("Turn Off 2", self.turn_off_button2)
@@ -276,23 +276,29 @@ class MainWindow(QMainWindow):
 
         # set up main window
         self.setGeometry(30, 600, 300, 150)
-        self.setWindowTitle('Gas weight')        
+        self.setWindowTitle('Monitor Massage')        
 
         # Init QDockWidget objects        
         self.connectionDock = ConnectionDock(self.mc)        
        
-        self.addDockWidget(Qt.TopDockWidgetArea, self.connectionDock)        
-
+        self.addDockWidget(Qt.TopDockWidgetArea, self.connectionDock)         
+    
+    
+    
+    
+    
     def update_data(self):
         global we_current
         print('Next update')
-        we_current=we_current-random.randrange(1,10)/10
-        threshold = 4990
-        if(we_current > 4990):
+        r=random.randrange(1,10)
+        update_rate = 5000 # in msec
+        #we_current=we_current-random.randrange(1,10)
+        threshold = 9
+        if(r >= 9):
 
             bot_token= "7327997608:AAFUFrsXXkufPwaGKEVTtxGPVQoc4VeTn4w"
             chat_id = "718108373"
-            message = f"הערך הנוכחי {we_current} חרג מהסף {threshold}."
+            message = f"תבדוק את ההודעות במסד הנתונים"
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
             params = {"chat_id": chat_id, "text": message}
             response = requests.get(url, params=params)
@@ -302,32 +308,13 @@ class MainWindow(QMainWindow):
             else:
                 print("no send massege to telegtram:", response.text)
 
-            
-            # message = MIMEMultipart()
-            # email_sender= "temp@gmail.com"
-            # email_password = os.environ.get("EMAIL_PASWWORD")
-            # receiver_email = "alexanderno@my.hit.ac.il"
-
-            # subject = "התראה! ערך חרג מהסף"
-            # body = """
-            # "הערך הנוכחי הוא: {we_current}. חרג מהסף המוגדר."
-            # """
-            # em = EmailMessage()
-            # em["from"] = email_sender
-            # em["To"] = receiver_email
-            # message["Subject"] = subject
-            
-            # em.set_content(body)
-            # context= ssl.create_default_context()
-            # context.verify_mode = ssl.CERT_NONE
-            # context.check_hostname = False
-            # with smtplib.SMTP_SSL('smtp.gmail.com', 465, context= context) as smtp:
-            #     smtp.login(email_sender, email_password)
-            #     smtp.sendmail(email_sender, receiver_email , em.as_string())
 
 
-        current_data='Weight: '+str(we_current)
-        self.connectionDock.Weight.setText(str(we_current))        
+        #current_data='Weight: '+str(we_current)
+        current_data='Weight: '+str(r)
+        #self.connectionDock.Weight.setText(str(we_current)) 
+        self.connectionDock.Weight.setText(str(r))       
+        #self.mc.publish_to(DHT_topic,current_data)
         self.mc.publish_to(DHT_topic,current_data)
         
 

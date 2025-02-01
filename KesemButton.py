@@ -9,6 +9,7 @@ from PyQt5.QtCore import *
 import paho.mqtt.client as mqtt
 import time
 import datetime
+import csv
 from mqtt_init import *
 
 
@@ -211,6 +212,25 @@ class ConnectionDock(QDockWidget):
         self.mc.publish_to(self.ePublisherTopic.text(), "Kesem massage: " + message)
         # ניקוי השדה לאחר השליחה
         self.emassage.setText("")
+        
+        file_path = "C:\Python313\leasons\פרוייקט סופי/LocalDB_Monitor.csv" 
+
+
+        # יצירת ספרייה אם לא קיימת
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+
+        # שמירת ההודעה בקובץ CSV
+        with open(file_path, 'a', newline='') as csvfile:
+            fieldnames = ['time', 'message']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            # אם הקובץ ריק, כותב את שורת הכותרות
+            if csvfile.tell() == 0:
+                writer.writeheader()
+
+            # כתיבת ההודעה הנוכחית
+            writer.writerow({'time': datetime.datetime.now(), 'message': " Kesem massage: " + message})
 
 
 
