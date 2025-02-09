@@ -31,7 +31,7 @@ CONNECTED = False
 r=random.randrange(1,10)
 clientname="IOT_client-Id234-"+str(r)
 DHT_topic = 'IoT/final_project/alex_lir_kesem'
-update_rate = 5000 # in msec
+#update_rate = 5000 # in msec
 #we_current = 5000
 
 class Mqtt_client():
@@ -194,8 +194,8 @@ class ConnectionDock(QDockWidget):
         self.ePublisherTopic.setText(DHT_topic)
 
   
-        self.Weight=QLineEdit()
-        self.Weight.setText('')
+        #self.Weight=QLineEdit()
+        #self.Weight.setText('')
 
         
 
@@ -203,7 +203,7 @@ class ConnectionDock(QDockWidget):
         formLayot.addRow("Turn On",self.eConnectbtn)
         formLayot.addRow("Turn Off", self.Cutoff)
         formLayot.addRow("Pub topic",self.ePublisherTopic)
-        formLayot.addRow("massege",self.Weight)
+        #formLayot.addRow("massege",self.Weight)
         # formLayot.addRow("Humidity",self.Humidity)
         # self.turn_off_button2 = QPushButton("Turn Off 2")
         # formLayot.addRow("Turn Off 2", self.turn_off_button2)
@@ -219,7 +219,7 @@ class ConnectionDock(QDockWidget):
         
     def on_connected(self):
         self.eConnectbtn.setStyleSheet("background-color: green")
-        self.Weight.setEnabled(True)  # מאפשר עריכה בשדה המשקל
+        #self.Weight.setEnabled(True)  # מאפשר עריכה בשדה המשקל
 
 
 
@@ -235,7 +235,7 @@ class ConnectionDock(QDockWidget):
         self.mc.set_password(self.ePassword.text())        
         self.mc.connect_to()        
         self.mc.start_listening()
-        self.Weight.setEnabled(True)  # מאפשר עריכה בשדה המשקל
+        #self.Weight.setEnabled(True)  # מאפשר עריכה בשדה המשקל
 
 
 
@@ -267,9 +267,9 @@ class MainWindow(QMainWindow):
         # Init of Mqtt_client class
         self.mc=Mqtt_client()
         
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.update_data)
-        self.timer.start(update_rate) # in msec
+        #self.timer = QtCore.QTimer(self)
+        #self.timer.timeout.connect(self.update_data)
+        #self.timer.start(update_rate) # in msec
         
         # general GUI settings
         self.setUnifiedTitleAndToolBarOnMac(True)
@@ -285,38 +285,40 @@ class MainWindow(QMainWindow):
     
     
     
-    
-    
-    def update_data(self):
-        global we_current
-        print('Next update')
-        r=random.randrange(1,10)
-        update_rate = 5000 # in msec
-        #we_current=we_current-random.randrange(1,10)
-        threshold = 9
-        if(r >= 9):
-
-            bot_token= "7327997608:AAFUFrsXXkufPwaGKEVTtxGPVQoc4VeTn4w"
-            chat_id = "718108373"
-            message = f"תבדוק את ההודעות במסד הנתונים"
-            url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-            params = {"chat_id": chat_id, "text": message}
-            response = requests.get(url, params=params)
-
-            if response.status_code == 200:
-                print("send massege to telegram")
-            else:
-                print("no send massege to telegtram:", response.text)
+      
 
 
 
-        #current_data='Weight: '+str(we_current)
-        current_data='Weight: '+str(r)
-        #self.connectionDock.Weight.setText(str(we_current)) 
-        self.connectionDock.Weight.setText(str(r))       
-        #self.mc.publish_to(DHT_topic,current_data)
-        self.mc.publish_to(DHT_topic,current_data)
+ 
+
+
+ 
         
+
+
+
+
+
+def is_suspicious(self, message,sender):
+
+
+    suspicious_keywords = ["alert", "התראה", "לגנוב", "לפרוץ", "crime", "attack", "hit"]  
+
+
+
+    if any(keyword in message.lower() for keyword in suspicious_keywords):  
+        bot_token = "7327997608:AAFUFrsXXkufPwaGKEVTtxGPVQoc4VeTn4w" 
+        chat_id = "718108373" 
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        data = {"chat_id": chat_id, "text": f"⚠️ Suspicious message from {sender}: {message}"}
+        
+        response = requests.post(url, data=data)
+        return response.status_code, response.text  
+
+    return None
+
+
+
 
 
 app = QApplication(sys.argv)

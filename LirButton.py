@@ -11,10 +11,13 @@ import time
 import datetime
 import csv
 
+import requests
+
 from mqtt_init import *
+from Button import *
 
 # Creating Client name - should be unique 
-global clientname, CONNECTED
+#global clientname, CONNECTED
 CONNECTED = False
 r=random.randrange(1,10000000)
 clientname="IOT_client-Id-"+str(r)
@@ -209,27 +212,30 @@ class ConnectionDock(QDockWidget):
     def push_button_click(self):
         message = self.emassage.text()
         self.mc.publish_to(self.ePublisherTopic.text(), "Lir massage: " + message)
-        # ניקוי השדה לאחר השליחה
         self.emassage.setText("")
         
         file_path = "C:\Python313\leasons\פרוייקט סופי/LocalDB_Monitor.csv" 
 
+        is_suspicious(self,message,"Lir")
+        
 
-        # יצירת ספרייה אם לא קיימת
+        
+
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
 
-        # שמירת ההודעה בקובץ CSV
+
+
         with open(file_path, 'a', newline='') as csvfile:
             fieldnames = ['time', 'message']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-            # אם הקובץ ריק, כותב את שורת הכותרות
             if csvfile.tell() == 0:
                 writer.writeheader()
 
-            # כתיבת ההודעה הנוכחית
             writer.writerow({'time': datetime.datetime.now(), 'message': " Lir massage: " + message})
+
+            
 
 
 
